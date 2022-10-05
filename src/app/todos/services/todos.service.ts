@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
-import { BehaviorSubject, map } from 'rxjs'
+import { BehaviorSubject, map, pipe } from 'rxjs'
 import { Todo } from '../models/todos.models'
 import { CommonResponse } from '../../core/models/core.models'
 
@@ -38,6 +38,7 @@ export class TodosService {
         this.todos$.next(todos)
       })
   }
+
   removeTodo(id: string) {
     this.http
       .delete<CommonResponse>(`${environment.baseUrl}/todo-lists/{${id}}`)
@@ -46,6 +47,29 @@ export class TodosService {
           const stateTodos = this.todos$.getValue()
           if (!res.resultCode)
             return this.todos$.getValue().filter(el => el.id !== id)
+          return stateTodos
+        })
+      )
+      .subscribe(todos => {
+        this.todos$.next(todos)
+      })
+  }
+
+  updateTodoTitle(data: { todoId: string; title: string }) {
+    this.http
+      .put<CommonResponse>(
+        `${environment.baseUrl}/todo-lists/{${data.todoId}}`,
+        {
+          title: data.title,
+        }
+      )
+      .pipe(
+        map(res => {
+          const stateTodos = this.todos$.getValue()
+          if (res.resultCode === 0)
+            return stateTodos.map(tl =>
+              tl.id === data.todoId ? { ...tl, title: data.title } : { ...tl }
+            )
           return stateTodos
         })
       )
