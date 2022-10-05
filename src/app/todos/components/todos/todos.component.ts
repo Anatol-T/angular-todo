@@ -10,10 +10,16 @@ import { Todo } from '../../models/todos.models'
 })
 export class TodosComponent implements OnInit {
   todos$!: Observable<Todo[]>
+  todoTitle = ''
+
   constructor(private todosService: TodosService) {}
 
   ngOnInit(): void {
     this.todos$ = this.todosService.todos$
     this.todosService.getTodos()
+  }
+  addTodoHandler() {
+    this.todosService.addTodo(this.todoTitle)
+    this.todoTitle = ''
   }
 }
