@@ -38,4 +38,19 @@ export class TodosService {
         this.todos$.next(todos)
       })
   }
+  removeTodo(id: string) {
+    this.http
+      .delete<CommonResponse>(`${environment.baseUrl}/todo-lists/{${id}}`)
+      .pipe(
+        map(res => {
+          const stateTodos = this.todos$.getValue()
+          if (!res.resultCode)
+            return this.todos$.getValue().filter(el => el.id !== id)
+          return stateTodos
+        })
+      )
+      .subscribe(todos => {
+        this.todos$.next(todos)
+      })
+  }
 }
