@@ -8,8 +8,9 @@
       [(ngModel)]="newTitle"
     >
     <ng-template #content>
-      <p (dblclick)="toggleEditMode()">{{todo.title}}</p>
+      <p (dblclick)="toggleEditMode()"><b>{{todo.title}}</b></p>
     </ng-template>
-    <button (click)="removeTodoHandler()">-</button>
+    <button (click)="removeTodoHandler()">x</button>
   </div>
+  <tl-tasks [todoId]="todo.id"></tl-tasks>
 </div>
