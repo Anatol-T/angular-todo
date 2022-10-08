@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
-import { map, Observable } from 'rxjs'
-import { GetTasksResponse, Task } from '../models/tasks.models'
+import { BehaviorSubject, map } from 'rxjs'
+import { DomainTask, GetTasksResponse, Task } from '../models/tasks.models'
+import { CommonResponse } from '../../core/models/core.models'
 
 @Injectable({
   providedIn: 'root',
 })
 export class TasksService {
+  tasks$ = new BehaviorSubject<DomainTask>({})
+
   constructor(private http: HttpClient) {}
 
-  getTasks(todoId: string): Observable<Task[]> {
-    return this.http
+  getTasks(todoId: string) {
+    this.http
       .get<GetTasksResponse>(
         `${environment.baseUrl}/todo-lists/{${todoId}}/tasks`
       )
@@ -20,5 +23,61 @@ export class TasksService {
           return res.items
         })
       )
+      .subscribe(tasks => {
+        const stateTasks = this.tasks$.getValue()
+        stateTasks[todoId] = tasks
+        this.tasks$.next(stateTasks)
+      })
+  }
+
+  addTask(data: { todoId: string; title: string }) {
+    this.http
+      .post<CommonResponse<{ item: Task }>>(
+        `${environment.baseUrl}/todo-lists/{${data.todoId}}/tasks`,
+        {
+          title: data.title,
+        }
+      )
+      .pipe(
+        map(res => {
+          const stateTasks = this.tasks$.getValue()
+          stateTasks[data.todoId] = [res.data.item, ...stateTasks[data.todoId]]
+          return stateTasks
+        })
+      )
+      .subscribe(tasks => this.tasks$.next(tasks))
+  }
+
+  removeTask(data: { todoId: string; taskId: string }) {
+    this.http
+      .delete<CommonResponse>(
+        `${environment.baseUrl}/todo-lists/{${data.todoId}}/tasks/${data.taskId}`
+      )
+      .pipe(
+        map(res => {
+          const stateTasks = this.tasks$.getValue()
+          const tasksForTodo = stateTasks[data.todoId]
+          stateTasks[data.todoId] = tasksForTodo.filter(
+            el => el.id !== data.taskId
+          )
+          return stateTasks
+        })
+      )
+      .subscribe(tasks => this.tasks$.next(tasks))
+  }
+
+  updateTaskStatus(data: { todoId: string; taskId: string }) {
+    this.http.put(
+      `${environment.baseUrl}/todo-lists/{${data.todoId}}/tasks/${data.taskId}`,
+      {}
+    )
   }
 }
+
+// title: required(string)
+// description: required(string)
+// completed: required(boolean)
+// status: required(integer)
+// priority: required(integer)
+// startDate: required(datetime)
+// deadline: required(datetime)

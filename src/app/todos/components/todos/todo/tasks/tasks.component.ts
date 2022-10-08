@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { TasksService } from '../../../../services/tasks.service'
-import { Observable } from 'rxjs'
+import { filter, map, Observable } from 'rxjs'
 import { Task } from '../../../../models/tasks.models'
 
 @Component({
@@ -13,9 +13,22 @@ export class TasksComponent implements OnInit {
 
   tasks$?: Observable<Task[]>
 
+  taskTitle = ''
+
   constructor(private tasksService: TasksService) {}
 
   ngOnInit(): void {
-    this.tasks$ = this.tasksService.getTasks(this.todoId)
+    this.tasks$ = this.tasksService.tasks$.pipe(
+      map(tasksObj => tasksObj[this.todoId])
+    )
+    this.tasksService.getTasks(this.todoId)
+  }
+  addTaskHandler() {
+    this.tasksService.addTask({ title: this.taskTitle, todoId: this.todoId })
+    this.taskTitle = ''
+  }
+
+  removeTask(data: { todoId: string; taskId: string }) {
+    this.tasksService.removeTask(data)
   }
 }

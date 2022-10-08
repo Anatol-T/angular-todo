@@ -16,3 +16,7 @@ export interface Task {
   startDate: string
   deadline: string
 }
+
+export interface DomainTask {
+  [key: string]: Task[]
+}
