@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { TasksService } from '../../../../services/tasks.service'
 import { filter, map, Observable } from 'rxjs'
-import { Task } from '../../../../models/tasks.models'
+import { Task, UpdateTaskModel } from '../../../../models/tasks.models'
 
 @Component({
   selector: 'tl-tasks',
@@ -30,5 +30,9 @@ export class TasksComponent implements OnInit {
 
   removeTask(data: { todoId: string; taskId: string }) {
     this.tasksService.removeTask(data)
+  }
+
+  changeTask(data: { todoId: string; taskId: string; model: UpdateTaskModel }) {
+    this.tasksService.updateTaskStatus(data)
   }
 }

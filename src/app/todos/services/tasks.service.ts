@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
 import { BehaviorSubject, map } from 'rxjs'
-import { DomainTask, GetTasksResponse, Task } from '../models/tasks.models'
+import {
+  DomainTask,
+  GetTasksResponse,
+  Task,
+  UpdateTaskModel,
+} from '../models/tasks.models'
 import { CommonResponse } from '../../core/models/core.models'
 
 @Injectable({
@@ -66,18 +71,26 @@ export class TasksService {
       .subscribe(tasks => this.tasks$.next(tasks))
   }
 
-  updateTaskStatus(data: { todoId: string; taskId: string }) {
-    this.http.put(
-      `${environment.baseUrl}/todo-lists/{${data.todoId}}/tasks/${data.taskId}`,
-      {}
-    )
+  updateTaskStatus(data: {
+    todoId: string
+    taskId: string
+    model: UpdateTaskModel
+  }) {
+    this.http
+      .put<CommonResponse>(
+        `${environment.baseUrl}/todo-lists/{${data.todoId}}/tasks/${data.taskId}`,
+        data.model
+      )
+      .pipe(
+        map(res => {
+          const stateTasks = this.tasks$.getValue()
+          const tasksForTodo = stateTasks[data.todoId]
+          stateTasks[data.todoId] = tasksForTodo.map(el =>
+            el.id === data.taskId ? { ...el, ...data.model } : { ...el }
+          )
+          return stateTasks
+        })
+      )
+      .subscribe(tasks => this.tasks$.next(tasks))
   }
 }
-
-// title: required(string)
-// description: required(string)
-// completed: required(boolean)
-// status: required(integer)
-// priority: required(integer)
-// startDate: required(datetime)
-// deadline: required(datetime)
