@@ -24,6 +24,8 @@ export class TaskComponent implements OnInit {
   ngOnInit(): void {}
 
   taskStatusEnum = TaskStatusEnum
+  newTitle = ''
+  editMode = false
 
   removeTaskHandler() {
     this.removeTaskEvent.emit({
@@ -34,16 +36,33 @@ export class TaskComponent implements OnInit {
 
   changeTaskStatusHandler(event: MouseEvent) {
     const newStatus = (event.currentTarget as HTMLInputElement).checked
-    const model: UpdateTaskModel = {
+
+    this.changeTask({
       status: newStatus
         ? this.taskStatusEnum.completed
         : this.taskStatusEnum.active,
+    })
+  }
+
+  activateEditMode() {
+    this.newTitle = this.task.title
+    this.editMode = true
+  }
+
+  editTitleHandler() {
+    this.changeTask({ title: this.newTitle })
+    this.editMode = false
+  }
+  changeTask(patch: Partial<UpdateTaskModel>) {
+    const model: UpdateTaskModel = {
+      status: this.task.status,
       title: this.task.title,
       completed: this.task.completed,
       deadline: this.task.deadline,
       description: this.task.description,
       priority: this.task.priority,
       startDate: this.task.startDate,
+      ...patch,
     }
     this.updateTaskEvent.emit({
       todoId: this.task.todoListId,
