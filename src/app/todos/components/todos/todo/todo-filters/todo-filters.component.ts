@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core'
+import { Filter } from '../../../../models/todos.models'
 
 @Component({
   selector: 'tl-todo-filters',
   templateUrl: './todo-filters.component.html',
-  styleUrls: ['./todo-filters.component.css']
+  styleUrls: ['./todo-filters.component.css'],
 })
-export class TodoFiltersComponent implements OnInit {
+export class TodoFiltersComponent {
+  @Output() changeFilterEvent = new EventEmitter<Filter>()
+  filter: Filter = 'all'
 
-  constructor() { }
-
-  ngOnInit(): void {
+  changeFilterHandler(filter: Filter) {
+    this.filter = filter
+    this.changeFilterEvent.emit(filter)
   }
-
 }

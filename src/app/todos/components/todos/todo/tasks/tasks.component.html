@@ -5,6 +5,34 @@
   [(ngModel)]="taskTitle"
   (keyup.enter)="addTaskHandler()"
 />
+<!--<ng-container *ngFor="let task of tasks$ | async">-->
+<!--  <ng-container [ngSwitch]="filter">-->
+<!--    <ng-container *ngSwitchCase="'active'">-->
+<!--      <tl-task-->
+<!--        *ngIf="task.status === 0"-->
+<!--        [task]="task"-->
+<!--        (removeTaskEvent)="removeTask($event)"-->
+<!--        (updateTaskEvent)="changeTask($event)"-->
+<!--      ></tl-task>-->
+<!--    </ng-container>-->
+<!--    <ng-container *ngSwitchCase="'completed'">-->
+<!--      <tl-task-->
+<!--        *ngIf="task.status === 2"-->
+<!--        [task]="task"-->
+<!--        (removeTaskEvent)="removeTask($event)"-->
+<!--        (updateTaskEvent)="changeTask($event)"-->
+<!--      ></tl-task>-->
+<!--    </ng-container>-->
+<!--    <ng-container *ngSwitchDefault>-->
+<!--      <tl-task-->
+<!--        [task]="task"-->
+<!--        (removeTaskEvent)="removeTask($event)"-->
+<!--        (updateTaskEvent)="changeTask($event)"-->
+<!--      ></tl-task>-->
+<!--    </ng-container>-->
+<!--  </ng-container>-->
+<!--</ng-container>-->
+
 <tl-task
   *ngFor="let task of tasks$ | async"
   [task]="task"

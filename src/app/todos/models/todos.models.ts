@@ -4,3 +4,4 @@ export interface Todo {
   order: number
   title: string
 }
+export type Filter = 'all' | 'active' | 'completed'

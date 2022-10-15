@@ -1,1 +1,5 @@
-<p>todo-filters works!</p>
+<div class="box">
+  <button (click)="changeFilterHandler('all')" [ngClass]="{'active': filter === 'all'}">All</button>
+  <button (click)="changeFilterHandler('active')" [ngClass]="{'active': filter === 'active'}">Active</button>
+  <button (click)="changeFilterHandler('completed')" [ngClass]="{'active': filter === 'completed'}">Completed</button>
+</div>

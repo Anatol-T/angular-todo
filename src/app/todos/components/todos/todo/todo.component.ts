@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { Todo } from '../../../models/todos.models'
+import { Filter, Todo } from '../../../models/todos.models'
 
 @Component({
   selector: 'tl-todo',
@@ -16,6 +16,7 @@ export class TodoComponent {
 
   isEditMode = false
   newTitle = ''
+  filter: Filter = 'all'
 
   constructor() {}
 
@@ -30,5 +31,9 @@ export class TodoComponent {
       this.newTitle = this.todo.title
     }
     this.isEditMode = !this.isEditMode
+  }
+
+  changeFilter(filter: Filter) {
+    this.filter = filter
   }
 }
