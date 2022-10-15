@@ -1,5 +1,8 @@
 <div class="todos-header">
   <h1>Angular TODO</h1>
+  <div>
+    <button (click)="logoutHandler()">logout</button>
+  </div>
 </div>
 <div class="todos-input">
   <input class="input" type="text" placeholder="Add new todo title" [(ngModel)]="todoTitle"/>

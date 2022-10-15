@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { AuthService } from '../../../core/services/auth.service'
 
 @Component({
   selector: 'tl-login',
@@ -18,9 +19,8 @@ export class LoginComponent implements OnInit {
     ]),
     rememberMe: new FormControl(false),
   })
-  mail = ''
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {}
 
@@ -33,6 +33,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     const value = this.loginForm.value
-    this.mail = JSON.stringify(this.email?.value)
+    this.authService.login(value)
   }
 }
