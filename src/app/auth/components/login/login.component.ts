@@ -9,15 +9,18 @@ import { AuthService } from '../../../core/services/auth.service'
 })
 export class LoginComponent implements OnInit {
   loginForm = new FormGroup({
-    email: new FormControl('', [
-      Validators.required,
-      Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
-    ]),
-    password: new FormControl('', [
-      Validators.required,
-      Validators.minLength(3),
-    ]),
-    rememberMe: new FormControl(false),
+    email: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
+      ],
+    }),
+    password: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)],
+    }),
+    rememberMe: new FormControl<boolean>(false, { nonNullable: true }),
   })
 
   constructor(private authService: AuthService) {}
@@ -27,6 +30,7 @@ export class LoginComponent implements OnInit {
   get email() {
     return this.loginForm.get('email')
   }
+
   get password() {
     return this.loginForm.get('password')
   }
