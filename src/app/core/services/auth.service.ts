@@ -4,15 +4,16 @@ import { environment } from '../../../environments/environment'
 import { CommonResponse } from '../models/core.models'
 import { ResultCodeEnum } from '../enums/resultCode.enum'
 import { Router } from '@angular/router'
-
-interface LoginRequestData {
-  email: string
-  password: string
-  rememberMe: boolean
-}
+import { LoginRequestData, MeResponse } from '../models/auth.models'
 
 @Injectable()
 export class AuthService {
+  isAuth = false
+  resolveAuthRequest: Function = () => {}
+  authRequest = new Promise(resolve => {
+    this.resolveAuthRequest = resolve
+  })
+
   constructor(private http: HttpClient, private router: Router) {}
 
   login(data: Partial<LoginRequestData>) {
@@ -27,6 +28,7 @@ export class AuthService {
         }
       })
   }
+
   logout() {
     this.http
       .delete<CommonResponse>(`${environment.baseUrl}/auth/login`)
@@ -36,7 +38,15 @@ export class AuthService {
         }
       })
   }
+
   me() {
-    this.http.get(`${environment.baseUrl}/auth/me`).subscribe(res => {})
+    this.http
+      .get<CommonResponse<MeResponse>>(`${environment.baseUrl}/auth/me`)
+      .subscribe(res => {
+        if (res.resultCode === ResultCodeEnum.success) {
+          this.isAuth = true
+        }
+        this.resolveAuthRequest()
+      })
   }
 }
