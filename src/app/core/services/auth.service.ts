@@ -5,7 +5,8 @@ import { CommonResponse } from '../models/core.models'
 import { ResultCodeEnum } from '../enums/resultCode.enum'
 import { Router } from '@angular/router'
 import { LoginRequestData, MeResponse } from '../models/auth.models'
-import { BehaviorSubject, catchError, EMPTY } from 'rxjs'
+import { BehaviorSubject, catchError, EMPTY, tap } from 'rxjs'
+import { NotificationService } from './notification.service'
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,11 @@ export class AuthService {
   })
   isAuth$ = new BehaviorSubject<boolean>(false)
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {}
 
   login(data: Partial<LoginRequestData>) {
     this.isAuth$.next(true)
@@ -25,11 +30,17 @@ export class AuthService {
         `${environment.baseUrl}/auth/login`,
         data
       )
-      .pipe(catchError(this.errorHandler.bind(this)))
+      .pipe(
+        catchError(this.errorHandler.bind(this)),
+        tap(() => {
+          this.isAuth$.next(false)
+        })
+      )
       .subscribe(res => {
         if (res.resultCode === ResultCodeEnum.success) {
-          this.isAuth$.next(false)
           this.router.navigate(['/'])
+        } else {
+          this.notificationService.handleError(res.messages[0])
         }
       })
   }
@@ -62,7 +73,7 @@ export class AuthService {
   }
 
   private errorHandler(err: HttpErrorResponse) {
-    console.log(err.message)
+    this.notificationService.handleError(err.message)
     return EMPTY
   }
 }

@@ -1,4 +1,5 @@
 <div *ngIf="isAuth$ | async else elseBlock">loading...</div>
+<tl-notify></tl-notify>
 <ng-template #elseBlock>
   <router-outlet></router-outlet>
 </ng-template>
