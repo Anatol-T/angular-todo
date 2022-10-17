@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { environment } from '../../../environments/environment'
-import { BehaviorSubject, map, pipe } from 'rxjs'
+import { BehaviorSubject, map } from 'rxjs'
 import { Todo } from '../models/todos.models'
 import { CommonResponse } from '../../core/models/core.models'
 

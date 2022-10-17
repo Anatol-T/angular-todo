@@ -12,13 +12,37 @@
   margin-bottom: 20px;
   gap: 10px;
 }
-.input{
+
+.input {
   width: 300px;
   border: 2px solid black;
   padding: 10px;
 }
+
 .todos-box {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  backdrop-filter: blur(2px);
+}
+
+.spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }

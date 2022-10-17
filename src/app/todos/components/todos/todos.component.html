@@ -4,6 +4,10 @@
     <button (click)="logoutHandler()">logout</button>
   </div>
 </div>
+<div *ngIf="loading$ | async">
+  <div  class="overlay"></div>
+  <div class="spinner">loading...</div>
+</div>
 <div class="todos-input">
   <input class="input" type="text" placeholder="Add new todo title" [(ngModel)]="todoTitle"/>
   <button (click)="addTodoHandler()">Add todo</button>
