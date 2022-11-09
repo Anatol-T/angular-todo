@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, OnInit } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { TodosService } from '../../services/todos.service'
 import { Observable } from 'rxjs'
 import { Todo } from '../../models/todos.models'
@@ -27,6 +27,7 @@ export class TodosComponent implements OnInit {
   ngOnInit(): void {
     this.todosService.getTodos()
   }
+
   addTodoHandler() {
     this.todosService.addTodo(this.todoTitle)
     this.todoTitle = ''

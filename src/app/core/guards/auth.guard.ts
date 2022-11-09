@@ -4,8 +4,11 @@ import {
   CanActivate,
   Router,
   RouterStateSnapshot,
+  UrlTree,
 } from '@angular/router'
 import { AuthService } from '../services/auth.service'
+import { map, Observable } from 'rxjs'
+import { ResultCodeEnum } from '../enums/resultCode.enum'
 
 @Injectable({
   providedIn: 'root',
@@ -13,15 +16,24 @@ import { AuthService } from '../services/auth.service'
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  async canActivate(
+  canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Promise<boolean> {
-    await this.authService.authRequest
-    const isAuth = this.authService.isAuth
-    if (!isAuth) {
-      this.router.navigate(['/login'])
-    }
-    return isAuth
+  ):
+    | Observable<boolean | UrlTree>
+    | Promise<boolean | UrlTree>
+    | boolean
+    | UrlTree {
+    const urlNav = this.router.createUrlTree(['/login'])
+
+    return this.authService.me().pipe(
+      map(res => {
+        if (res.resultCode === ResultCodeEnum.success) {
+          return true
+        } else {
+          return urlNav
+        }
+      })
+    )
   }
 }

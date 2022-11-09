@@ -11,10 +11,11 @@ import { NotificationService } from './notification.service'
 @Injectable()
 export class AuthService {
   isAuth = false
-  resolveAuthRequest: Function = () => {}
-  authRequest = new Promise(resolve => {
-    this.resolveAuthRequest = resolve
-  })
+  meRequest = false
+  // resolveAuthRequest: Function = () => {}
+  // authRequest = new Promise(resolve => {
+  //   this.resolveAuthRequest = resolve
+  // })
   isAuth$ = new BehaviorSubject<boolean>(false)
 
   constructor(
@@ -59,17 +60,26 @@ export class AuthService {
   }
 
   me() {
+    this.meRequest = true
     this.isAuth$.next(true)
-    this.http
+    return this.http
       .get<CommonResponse<MeResponse>>(`${environment.baseUrl}/auth/me`)
-      .pipe(catchError(this.errorHandler.bind(this)))
-      .subscribe(res => {
-        if (res.resultCode === ResultCodeEnum.success) {
-          this.isAuth = true
-        }
-        this.resolveAuthRequest()
-        this.isAuth$.next(false)
-      })
+      .pipe(
+        tap(res => {
+          if (res.resultCode === ResultCodeEnum.success) {
+            this.isAuth = true
+          }
+          this.isAuth$.next(false)
+        }),
+        catchError(this.errorHandler.bind(this))
+      )
+    // .subscribe(res => {
+    //   if (res.resultCode === ResultCodeEnum.success) {
+    //     this.isAuth = true
+    //   }
+    //   this.resolveAuthRequest()
+    //   this.isAuth$.next(false)
+    // })
   }
 
   private errorHandler(err: HttpErrorResponse) {
